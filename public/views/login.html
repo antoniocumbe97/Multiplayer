@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Solotov - ICON-->
+    <link rel="shortcut icon" href="../assets/img/solotov.png" type="image/x-icon">
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
+    <!-- Costum CSS-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="../assets/fontawesome/css/font-awesome.min.css">
+    <title>Solotov</title>
+  </head>
+  <body>
+    
+    <section class="material-half-bg">
+      <div class="login_cover cover"></div>
+    </section>
+    <section class="login-content">
+      <h3 class="login-head">
+        <img src="../assets/img/solotov.png" width="60">
+      </h3>
+      <div class="logo mb-0">
+        <h1><b>Solotov<b></h1>
+      </div>
+      <div class="card form-box login-box semibold-text" style="font: 16px;">
+        <div class="register-form pt-3 px-3">
+          <div class="alert alert-danger mb-1 py-1 px-1 text-center" id="messageBox" style="display: none;"></div>          
+          <!-- Login -->
+          <form name="formLogin" autocomplete="off">
+            <!-- Usuario -->
+            <div class="form-group mb-2">
+              <!--label for="id_email" class="form-control-sm">Nome do utilizador</label -->
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text form_icon">
+                    <i class="fa fa-user-secret" aria-hidden="true"></i>
+                  </div>
+                </div>
+                  <input type="text" class="form-control form-control-sm" id="utilizador" placeholder="Nome do utilizador"  autocomplete="off" onblur="desfoco()" onfocus="foco()">
+              </div>
+            </div>
+            <!-- Iniciar sessão -->
+            <div class="form-group btn-container mb-2">
+              <button class="btn login_cover btn-block" id="BtnLogin"><i class="fa fa-sign-in fa-lg fa-fw"></i>Iniciar sessão</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Essential javascripts for application to work-->
+    <script src="../assets/js/jquery-3.5.1.min.js"></script>
+    <script src="../assets/js/popper.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
+    <script src="../assets/js/plugins/ajaxLogin.js"></script>
+    <!--script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJW424HJY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QCJW424HJY');
+    </script-->    
+        
+  </body>  
+</html>

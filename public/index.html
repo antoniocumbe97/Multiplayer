@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Solotov - ICON-->
+    <link rel="shortcut icon" href="assets/img/solotov.png" type="image/x-icon">
+    <title>Solotov</title>
+  </head>
+  <body>
+    <script>
+      window.onload = function(){
+        if(sessionStorage.getItem('username') === null){
+          window.location.href ="/login";
+        }else{
+          window.location.href ="/menu";
+        }
+      }
+    </script>
+    
+    <!--script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJW424HJY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QCJW424HJY');
+    </script-->
+  </body>  
+</html>
