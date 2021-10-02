@@ -1,13 +1,13 @@
 document.getElementById('username').innerText = localStorage.getItem('username');
 window.onload = function(){
-    sessionStorage.setItem('playerOneCreate',undefined);
-    sessionStorage.setItem('playerTwoJoin',undefined);
+    sessionStorage.setItem('playerOneCreateRoom',undefined);
+    sessionStorage.setItem('playerTwoJoinRoom',undefined);
 }
-document.getElementById('playerOneCreate').onclick = function playerOneCreate(){
-    sessionStorage.setItem('playerOneCreate', (5>2));
+document.getElementById('playerOneCreateRoom').onclick = function playerOneCreateRoom(){
+    sessionStorage.setItem('playerOneCreateRoom', true);
     window.location.href = "/home/multiplayer/room";
 }
-document.getElementById('playerTwoJoin').onclick = function playerTwoJoin(){
-    sessionStorage.setItem('playerTwoJoin', (5>2));
+document.getElementById('playerTwoJoinRoom').onclick = function playerTwoJoinRoom(){
+    sessionStorage.setItem('playerTwoJoinRoom', true);
     window.location.href = "/home/multiplayer/room/join";
 }
