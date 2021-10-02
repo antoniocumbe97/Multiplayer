@@ -215,9 +215,11 @@ io.on('connection', (socket) => {
 	socket.on('openNewGame', (data) => {
 		const roomId = serverSide.players[socket.id].room;
 		const token = serverSide.rooms[roomId].token;
+		const player1 = serverSide.rooms[roomId].player1.id;
 		const player = data.playerId;
 		if(token == player){
 			io.to(roomId).emit('formNewGame');
+			io.to(player1).emit('setDisableTrue');
 		}
 	});
 
