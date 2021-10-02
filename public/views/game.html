@@ -5,15 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Solotov - ICON-->
-    <link rel="shortcut icon" href="/assets/img/solotov.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/solotov.png" type="image/x-icon">
     <!-- Main CSS-->
-    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
     <!-- Costum CSS-->
-    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
     <!-- Font-icon css-->
-    <link rel="stylesheet" type="text/css" href="/assets/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../assets/fontawesome/css/font-awesome.min.css">
     <title>Solotov</title>
   </head>
   <body>
@@ -23,11 +23,10 @@
       <header class="home">
         <div class="home-header">
           <div class="navBrand">
-            <img src="/assets/img/solotov.png"alt="">
+            <img src="../assets/img/solotov.png"alt="">
             <h5>Solotov</h5>
           </div>
           <div class="navUser">
-            <span id="time"></span>
             <!--button class="btn btn-light" id="BtnPausePlay">Pausar</button-->
           </div>
         </div>
@@ -37,17 +36,15 @@
 
       <main class="container">
         <div class="row">
-          <div class="col-12 col-md-4 d-flex justify-content-center text-center">
-            <nav class="nav nav-game mb-3 d-flex flex-nowrap flex-md-column justify-content-center overflow-auto">
-              <a class="nav-link" href="/home/menu">Menu</a>
-              <a class="nav-link" href="/home/ranking">Ranking</a>
-            </nav>
+          <div class="col-12 col-md-4">
+            
           </div>
           <div class="col-12 col-md-8 px-2 pt-md-5">
             <div class="boxGame">
               <div class="container mb-2">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%; height: 5px;" id="timer"></div>
                 <div class="row">
-                  <div class="col-9 pr-0"><img src="/assets/img/user.png" alt="Perfil" width="30"> <b><span id="usuario" class="text-verde"></span></b></div>
+                  <div class="col-9 pr-0"><img src="../assets/img/user.png" alt="Perfil" width="30"> <b><span id="usuario" class="text-verde"></span></b></div>
                   <div class="col-3 pl-0 text-right"><span id="pontuacao"></span> Pts</div>
                 </div>
                 <div class="row">
@@ -108,14 +105,14 @@
     <script src="../api/perguntas.js"></script>
     <script src="../app.js"></script>
     
-    <!--script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJW424HJY"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJW424HJY"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
       gtag('config', 'G-QCJW424HJY');
-    </script-->
+    </script>
     
 </body>  
 </html>
