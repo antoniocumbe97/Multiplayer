@@ -11,7 +11,7 @@ let resultImage = document.getElementById('image');
 let username = document.getElementById('usuario');
 let levelComplete = document.getElementById('nivel');
 let btnBox = document.getElementById('btnBox');
-
+let replied = false;
 const Levels =[{
 	"level":"1",
 	"optionBG":"#0c4b33",
@@ -134,12 +134,12 @@ function newGame(){
 	Timer.secunds = 0;
 	Timer.minutes = 0;
 
-	Question.all = questionsCategory();
+	Question.all = questionsCategory(sessionStorage.getItem('disciplina'));
 	Question.sequence = randomQuestions();
 	Question.current = 0;
 	/* create new session's for Questions, thats prevent lose the data even the page reload */
 
-	sessionStorage.setItem('allQuestion', questionsCategory());
+	sessionStorage.setItem('allQuestion', questionsCategory(sessionStorage.getItem('disciplina')));
 	sessionStorage.setItem('sequenceQuestion', randomQuestions());
 	sessionStorage.setItem('currentQuestion', 0);
 
@@ -167,15 +167,21 @@ function newGame(){
 
 function checkAnswer(answer){
 	disableOption()
-	if (Question.check(answer)) {
-		Quiz.currentScore += 50;
-		Quiz.countCorrect++;
-		options[answer-1].style.backgroundColor = '#28a745';
-	} else{
+	replied = true;
+	if(answer === 0){
 		Quiz.progress -= 25;
 		Quiz.countIncorrect++;
-		options[answer-1].style.backgroundColor = '#e42d3b';
-		options[Question.all[Question.sequence[Question.current]].answer-1].style.backgroundColor = '#28a745';
+	}else{
+		if (Question.check(answer)) {
+			Quiz.currentScore += 50;
+			Quiz.countCorrect++;
+			options[answer-1].style.backgroundColor = '#28a745';
+		} else{
+			Quiz.progress -= 25;
+			Quiz.countIncorrect++;
+			options[answer-1].style.backgroundColor = '#e42d3b';
+			options[Question.all[Question.sequence[Question.current]].answer-1].style.backgroundColor = '#28a745';
+		}
 	}
 	Quiz.countTotal++;
 	const GameState = {
@@ -184,7 +190,7 @@ function checkAnswer(answer){
 		"time": `${Timer.minutes}:${Timer.secunds}`
 	}
 	console.log(GameState)
-	this.setRanking(GameState);
+	setRanking(GameState);
 	setTimeout(update, 1500);
 }
 
@@ -235,9 +241,9 @@ function endGameOption(option){
 		result.style.display = 'none';
 		playing.style.display = 'block';
 		*/
-		setTimeout(window.location.href = "../views/menu.html", 2000);
+		setTimeout(window.location.href = "/home/menu", 2000);
     }else if(option === 'quit'){
-		window.location.href = "./menu.html";
+		window.location.href = "/home";
 	}else if(option === 'next'){
 		Quiz.level++;
 		Quiz.progress = 100;
@@ -287,13 +293,15 @@ function showQuestion(q){
 	options[2].style.backgroundColor = Levels[Quiz.level-1].optionBG;
 	options[3].style.backgroundColor = Levels[Quiz.level-1].optionBG;
 	enableOption();
+	replied = false;
+	timeController();
 }
 
 function saveStatus(){
 	let t = JSON.parse(sessionStorage.getItem('statusLevel'));
 	if((Quiz.countIncorrect > t.countIncorrect) && (Quiz.level === t.level))
 	{
-		Atual = Quiz.countIncorrect;
+		const Atual = Quiz.countIncorrect;
 		let Acumulado = t.countIncorrect+Quiz.countIncorrect;
 		Quiz.countIncorrect = Acumulado;
 		sessionStorage.setItem('statusLevel',JSON.stringify(Quiz));
@@ -325,6 +333,31 @@ function setRanking(GameState){
 	}
 	localStorage.setItem('ranking',JSON.stringify(arrayFiltro));
 }
+
+function timeController(){
+	secunds = 0;
+	const clock = setInterval(() => {
+		document.getElementById('timer').style.width = (100 - (secunds))+'%';
+		if(replied){
+			clearInterval(clock);
+		}else if(secunds >= 100){
+			clearInterval(clock);
+			checkAnswer(0);
+		}else{
+			secunds++;
+		}
+		if(secunds < 25){
+			document.getElementById('timer').style.backgroundColor = "#0c4b33";
+		}else if(secunds < 50){
+			document.getElementById('timer').style.backgroundColor = "#26961e";
+		}else if(secunds < 75){
+			document.getElementById('timer').style.backgroundColor = "#fd7e14";
+		}else{
+			document.getElementById('timer').style.backgroundColor = "#dc3545";
+		}
+	}, 300);
+}
+
 function timeCounter(){
 	if((Quiz.attrStatus == 'playing')){
 		Timer.secunds++;
@@ -335,18 +368,4 @@ function timeCounter(){
         Timer.secunds = 0;
 	}
 }
-
 newGame();
-/*
-BtnPausePlay.addEventListener('click', e =>{ 
-	if(e.target.textContent === 'Pausar'){
-		Quiz.attrStatus = 'stop';
-		pause = true;
-		e.target.textContent = 'Continuar';
-	}else{
-		pause = false;
-		Quiz.attrStatus = 'playing'
-		e.target.textContent = 'Pausar';
-	}
-})
-*/
