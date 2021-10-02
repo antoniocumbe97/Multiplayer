@@ -104,8 +104,6 @@
         pageCreateRoom.style.display = "none";
         pageJoinRoom.style.display = "none";
         pageRoom.style.display = "block";
-        //masterName.innerText = data.player1.name;
-        //masterId.innerText = data.player1.id;
     });
 //######################### pageRoom ##############################
     const otherPlayer = document.getElementById('NameOtherPlayer');
@@ -136,7 +134,9 @@
         pageGame.style.display = "none";
         pageEndGame.style.display = "none";
     });
-
+    socket.on('setDisableTrue', () => {
+        MultiplayerSubject.disabled = false;
+    });
     $(function(){
         let selectDisciplinas;
         const subjects = getSubjects();
@@ -247,22 +247,7 @@
         options[3].onclick = function(){}
     }
 
-    function endGameOption(action){
-        if(action == 'newGame'){
-            pageCreateRoom.style.display = "none";
-            pageJoinRoom.style.display = "none";
-            pageRoom.style.display = "none";
-            pageNewGame.style.display = "block";
-            pageGame.style.display = "none";
-            pageEndGame.style.display = "none";
-        }
-        if(action == 'leaveRoom'){
-            window.location.href = "/home";
-        }
-    }
-
     socket.on('result', function(resultState) {
-        console.log(resultState)
         if(parseInt(resultState.answer) !== 0){
             if (resultState.statusAnswer) {
                 options[resultState.answer-1].style.backgroundColor = '#28a745';
@@ -298,6 +283,8 @@
                 const btnBox = document.getElementById('btnBox');
                 const namePlayerWin = document.getElementById('namePlayerWin');
                 const idPlayerWin = document.getElementById('idPlayerWin');
+
+                
                 
                 document.getElementById('Player1Name').innerText = resultState.player1.name;
                 document.getElementById('Player1CurrentScore').innerText = resultState.player1.currentScore
@@ -314,12 +301,18 @@
                 subject.innerText = resultState.subject;
                 btnBox.innerHTML = `
                     <div class="col-6">
-                        <button class="btn btn_area btn-block" id="BtnL1" onclick="endGameOption('newGame')">Novo Jogo <i class="fa fa-plus fa-lg fa-fw"></i></button>
+                        <button class="btn btn_area btn-block" id="btnRestart">Novo Jogo <i class="fa fa-plus fa-lg fa-fw"></i></button>
                     </div>
                     <div class="col-6">
-                        <button class="btn btn-danger btn-block" id="BtnL2" onclick="endGameOption('leaveRoom')">Sair da sala <i class="fa fa-home fa-lg fa-fw"></i></button>
+                        <button class="btn btn-danger btn-block" id="btnLeaveRoom">Sair da sala <i class="fa fa-home fa-lg fa-fw"></i></button>
                     </div>
                 `;
+                document.getElementById('btnRestart').onclick = function(){
+                    socket.emit('openNewGame', {playerId: socket.id});
+                }
+                document.getElementById('btnLeaveRoom').onclick = function(){
+                    window.location.href = "/home";
+                }
 
                 if(resultState.player1.attrStatus === 'win'){
                     idPlayerWin.innerText = resultState.player1.id;
