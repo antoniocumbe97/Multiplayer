@@ -10,7 +10,7 @@
     color: #fff;
 }
 .text-verde{
-    color: #0c4b33;;
+    color: #0c4b33;
 }
 
 .app-header{
@@ -227,6 +227,12 @@ a:hover{
 .nav-game .active, .hrTable{
     text-transform: uppercase;
     font-weight: bold;
+    border-bottom: 1px solid #02442a;
+}
+.gameMaster{
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #0c4b33;
     border-bottom: 1px solid #02442a;
 }
 .home{
