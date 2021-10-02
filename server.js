@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+
 const Levels =[{
 	"level":"1",
 	"optionBG":"#0c4b33",
@@ -51,60 +52,16 @@ const Levels =[{
 	"questionColor":"#ffffff",
 }];
 
-const Question = {
-	current: Number,
-	sequence: Array,
-	all: Array,
-	next(){
-		if(this.current < this.all.length-1){
-			this.current++;
-			return true;
-		}
-		return false;
-	},
-	show(){
-		return this.all[this.sequence[this.current]];
-	},
-	check(answer){
-		if ((this.all[this.sequence[this.current]].answer) == answer) {
-			return true;		
-		} else{
-			return false;
-		}
-	}
-}
-
-let Quiz = {
-	username: String,
-	subject: String,
-	level: Number,
-	countTotal: Number,
-	countIncorrect: Number,
-	currentScore: Number,
-	countCorrect: Number,
-	progress: Number,
-	pause: Boolean,
-	attrStatus: String,
-	status(){
-		if(this.countIncorrect === 4){
-			this.attrStatus = 'lost';
-		}else if(this.countCorrect === (this.level*6)){
-			this.attrStatus = 'win';
-		}
-		return this.attrStatus;
-	},
-}
-
 const Timer = {
 	secunds: Number,
 	minutes: Number
 }
 
-function randomQuestions(){
-	const SizeQuestions = Question.all.length;
-	let num = new Array(SizeQuestions);
-	for(let i=0; i<SizeQuestions; i++){ //laço para percorrer todo o vetor
-		let randomNumber = Math.floor(Math.random()*SizeQuestions); //gerando número aleatório
+function randomQuestions(size){
+	//const SizeQuestions = Question.all.length;
+	let num = new Array(size);
+	for(let i=0; i<size; i++){ //laço para percorrer todo o vetor
+		let randomNumber = Math.floor(Math.random()*size); //gerando número aleatório
 		let found = false; //para saber se o numero foi encontrado ou não no vetor
 		for(let count=0; count<i; count++){ //função que percorre o vetor até onde já tenha sido preenchido
 			if(num[count] == randomNumber){ //verifica se o item no vetor é igual ao gerado
@@ -123,167 +80,247 @@ function randomQuestions(){
 	return num;
 }
 
-function initialState(questionsCategory){
-	Question.all = questionsCategory;
-	Question.sequence = randomQuestions();
-	Question.current = 0;
-	Quiz.attrStatus = 'playing';
-	Quiz.level = 1;
-	Quiz.progress = 50;
-	Quiz.countTotal = 0;
-	Quiz.currentScore = 0;
-  	Quiz.countCorrect = 0;
-	Quiz.countIncorrect = 0;
-}
-
-const game = {
+const serverSide = {
   players : {},
   rooms : {},
+}
+
+function Quiz (subject, allQuestions, sequenceQuestions, players) {
+	//Questions	
+	this.all = allQuestions,
+	this.sequence = sequenceQuestions,
+	this.current = 0,
+	this.subject = subject,
+	this.level = 1,
+	this.attrStatus = 'playing',
+	this.playerNow = {
+		id : players.player2.id,
+		name : players.player2.name
+	},
+	//player 1
+	this.player1 = {
+		id : players.player1.id,
+		name : players.player1.name,
+		room : players.player1.room,
+		countTotal : 0,
+		countIncorrect : 0,
+		countCorrect : 0,
+		currentScore : 0,
+		progress : 50
+	}
+	//player 2
+	this.player2 = {
+		id : players.player2.id,
+		name : players.player2.name,
+		room : players.player2.room,
+		countTotal : 0,
+		countIncorrect : 0,
+		countCorrect : 0,
+		currentScore : 0,
+		progress : 50
+	}
+	//Methods
+	this.next = () => {
+		if(this.current < this.all.length-1){
+			this.current++;
+			return true;
+		}
+		return false;
+	},
+	this.show = () => {
+		return this.all[this.sequence[this.current]];
+	},
+	this.check = (answer) => {
+		if ((this.all[this.sequence[this.current]].answer) == answer) {
+			return true;		
+		} else{
+			return false;
+		}
+	},
+	this.status = () => {
+		if(this.countIncorrect === 4){
+			this.attrStatus = 'lost';
+		}else if(this.countCorrect === (this.level*6)){
+			this.attrStatus = 'win';
+		}
+		return this.attrStatus;
+	}
+}
+
+function getState(roomId){
+	const data = {
+		subject : serverSide.rooms[roomId].play.subject,
+		level : Levels[0],
+		question : {
+			question : serverSide.rooms[roomId].play.show().question,
+			option1 : serverSide.rooms[roomId].play.show().option1,
+			option2 : serverSide.rooms[roomId].play.show().option2,
+			option3 : serverSide.rooms[roomId].play.show().option3,
+			option4 : serverSide.rooms[roomId].play.show().option4
+		},
+		attrStatus : serverSide.rooms[roomId].play.attrStatus,
+		player1 : serverSide.rooms[roomId].play.player1,
+		player2 : serverSide.rooms[roomId].play.player2,
+		playerNow : serverSide.rooms[roomId].play.playerNow
+	}
+	return data;
 }
 
 io.on('connection', (socket) => {
   //adicionar player conectado ao socket
   const name = `Player_${socket.id}`;
-  game.players[socket.id] = {name};
+  serverSide.players[socket.id] = {name};
 
-  socket.on('createRoom', (data) => {
-    const roomId = socket.id;
-    socket.join(roomId);
-	game.players[socket.id].id = `Player_${socket.id}`;
-	game.players[socket.id].name = data.player;
-    game.rooms[roomId] = {
-      player1 : game.players[socket.id],
-      player2 : undefined,
-      status: false
-    }
-	game.players[socket.id].room = roomId;
-	initialState(data.questions);
-	game.rooms[roomId].GameState = {
-		question: Question.show(),
-		attrStatus : Quiz.attrStatus,
-		level : Levels[Quiz.level-1]
-	}
-	game.rooms[roomId].player1.progress = Quiz.progress;
-	game.rooms[roomId].player1.countTotal = Quiz.countTotal;
-	game.rooms[roomId].player1.currentScore = Quiz.currentScore;
-	game.rooms[roomId].player1.countCorrect = Quiz.countCorrect;
-	game.rooms[roomId].player1.countIncorrect = Quiz.countIncorrect;
-	game.rooms[roomId].playerNow = game.players[socket.id];
-	io.to(roomId).emit('createdRoom', roomId);
-  });
-
-  socket.on('joinRoom', (data) => {
-    const roomId = socket.id;
-    if(data.codeInvite == roomId){
-      //console.log(`A sala : ${game.rooms[data.codeInvite]} é tua`);
-    }else if(!game.rooms[data.codeInvite].status){
-      socket.join(data.codeInvite);
-	  game.players[socket.id].id = `Player_${socket.id}`;
-	  game.players[socket.id].name = data.player;
-      game.rooms[data.codeInvite].player2 = game.players[socket.id];
-	  game.rooms[data.codeInvite].player2.progress = Quiz.progress;
-	  game.rooms[data.codeInvite].player2.countTotal = Quiz.countTotal;
-	  game.rooms[data.codeInvite].player2.currentScore = Quiz.currentScore;
-	  game.rooms[data.codeInvite].player2.countCorrect = Quiz.countCorrect;
-	  game.rooms[data.codeInvite].player2.countIncorrect = Quiz.countIncorrect;
-
-      game.rooms[data.codeInvite].status = true;
-      
-      game.players[socket.id].room = data.codeInvite;     
-	  
-      io.to(data.codeInvite).emit('startGame', game.rooms[data.codeInvite]);
-    }else{
-      //console.log(`A sala : ${game.rooms[data.codeInvite]} já está cheia`);
-    }
-  });
-
-  socket.on('checkAnswer', (response) => {
+  socket.on('createRoom',(data) => {
 	
-    const roomId = game.players[socket.id].room;
-    const player = game.rooms[roomId].playerNow;
-    const playerClient = `Player_${response.player}`;
-    const player1 = game.rooms[roomId].player1;
-    const player2 = game.rooms[roomId].player2;
-	const status = (game.rooms[roomId].GameState.attrStatus ==='playing');
-
-    if(player.id == playerClient && status){
-		//console.log('checkAnswer: ' + response.answer);
-		//console.log('player: ' + response.player.name);
-		let resultState = {
-			answer: response.answer,
-			correct: Number(Question.show().answer),
-		}
-
-		if(Question.check(response.answer)){
-			resultState.status = true;
-			if(player == player1){
-				game.rooms[roomId].player1.countTotal++;
-				game.rooms[roomId].player1.countCorrect++;
-				game.rooms[roomId].player1.currentScore += 50;
-				game.rooms[roomId].player1.progress += 10;
-
-				game.rooms[roomId].player2.progress -= 10;
-			}else{
-				game.rooms[roomId].player2.countTotal++;
-				game.rooms[roomId].player2.countCorrect++;
-				game.rooms[roomId].player2.currentScore += 50;
-				game.rooms[roomId].player2.progress += 10;
-
-				game.rooms[roomId].player1.progress -= 10;
-			}
-		}else{
-			resultState.status = false;
-			if(player == player1){
-				game.rooms[roomId].player1.countTotal++;
-				game.rooms[roomId].player1.countIncorrect++;
-				game.rooms[roomId].player1.progress -= 10;
-
-				game.rooms[roomId].player2.progress += 10;
-			}else{
-				game.rooms[roomId].player2.countTotal++;
-				game.rooms[roomId].player2.countIncorrect++;
-				game.rooms[roomId].player2.progress -= 10;
-
-				game.rooms[roomId].player1.progress += 10;
-			}
-		}
-
-		if(game.rooms[roomId].player1.countIncorrect === 4 || game.rooms[roomId].player1.progress === 0){
-			game.rooms[roomId].player1.attrStatus = 'lost';
-			game.rooms[roomId].player2.attrStatus = 'win';
-			game.rooms[roomId].GameState.attrStatus = 'endGame';
-		}else if(game.rooms[roomId].player1.countCorrect === 6 || game.rooms[roomId].player1.progress === 100){
-			game.rooms[roomId].player1.attrStatus = 'win';
-			game.rooms[roomId].player2.attrStatus = 'lost';
-			game.rooms[roomId].GameState.attrStatus = 'endGame';
-		}else if(game.rooms[roomId].player2.countIncorrect === 4 || game.rooms[roomId].player2.progress === 0){
-			game.rooms[roomId].player2.attrStatus = 'lost';
-			game.rooms[roomId].player1.attrStatus = 'win';
-			game.rooms[roomId].GameState.attrStatus = 'endGame';
-		}else if(game.rooms[roomId].player2.countCorrect === 6 || game.rooms[roomId].player2.progress === 100){
-			game.rooms[roomId].player2.attrStatus = 'win';
-			game.rooms[roomId].player1.attrStatus = 'lost';
-			game.rooms[roomId].GameState.attrStatus = 'endGame';
-		}else if(Question.next()){
-			game.rooms[roomId].playerNow = (player == player1) ? player2 : player1;
-			resultState.playerNow = game.rooms[roomId].playerNow;
-			resultState.question = Question.show();
-			resultState.level = 1;
-		}
-
-		resultState.player1 = game.rooms[roomId].player1;
-		resultState.player2 = game.rooms[roomId].player2;
-		resultState.gameState = game.rooms[roomId].GameState.attrStatus;
-
-		io.to(roomId).emit('result', resultState);
-    }
-
+	const roomId = `room_${socket.id}`;
+	const player = data.player;
+	serverSide.players[socket.id].id = socket.id;
+	serverSide.players[socket.id].name = player;
+    socket.join(roomId);
+	serverSide.rooms[roomId] = {
+		player1 : serverSide.players[socket.id],
+		player2 : undefined,
+		token : serverSide.players[socket.id].id,
+		status: false
+	}
+	serverSide.players[socket.id].room = roomId;
+	io.to(roomId).emit('createdRoom', roomId);
+	
   });
 
-  socket.on('disconnect', () => {
-    //console.log(`${game.players[socket.id].name} > disconnected`);
-    game.players[socket.id] = undefined;
-  });
+	socket.on('joinRoom', (data) => {
+		
+		const roomId = data.codeInvite;
+		const player = data.player;
+
+		if(roomId != socket.id && !serverSide.rooms[roomId].status){
+			socket.join(roomId);
+			serverSide.players[socket.id].id = socket.id;
+			serverSide.players[socket.id].name = player;
+
+			serverSide.rooms[roomId].player2 = serverSide.players[socket.id];  
+			serverSide.rooms[roomId].status = true;
+			serverSide.players[socket.id].room = roomId;
+
+			io.to(serverSide.rooms[roomId].player1.id).emit('otherPlayer', serverSide.rooms[roomId].player2);
+			io.to(serverSide.rooms[roomId].player2.id).emit('otherPlayer', serverSide.rooms[roomId].player1);
+
+			io.to(roomId).emit('joinedRoom', serverSide.rooms[roomId]);
+			
+		}
+
+	});
+  
+	socket.on('openNewGame', (data) => {
+		const roomId = serverSide.players[socket.id].room;
+		const token = serverSide.rooms[roomId].token;
+		const player = data.playerId;
+		if(token == player){
+			io.to(roomId).emit('formNewGame');
+		}
+	});
+
+	socket.on('newGame', (data) => {
+		const roomId = serverSide.players[socket.id].room;
+		const subject = data.subject;
+		const question = data.questions;
+		const sequence = randomQuestions(question.length);
+		const p1 = serverSide.rooms[roomId].player1;
+		const p2 = serverSide.rooms[roomId].player2;
+		const players = {
+			player1 : p1,
+			player2 : p2
+		}
+		const play = new Quiz(subject,question,sequence,players);
+		serverSide.rooms[roomId].play = play;
+		const GameState = getState(roomId);
+		io.to(roomId).emit('startedGame', GameState);
+	});
+
+	socket.on('checkAnswer', (response) => {
+
+		const playerClient = response.player;
+		const roomId = serverSide.players[playerClient].room;
+		const play = serverSide.rooms[roomId].play;
+		const playerServer = play.playerNow.id;
+		const status = (play.attrStatus ==='playing');
+
+		if(playerServer == playerClient && status){
+			
+			const player1 = {id : play.player1.id, name : play.player1.name}
+			const player2 = {id : play.player2.id, name : play.player2.name}
+
+			let resultState = {
+				answer: response.answer,
+				correct: Number(play.show().answer),
+			}
+			
+			if(play.check(response.answer)){
+				resultState.status = true;
+				if(playerClient == player1.id){
+					play.player1.countTotal++;
+					play.player1.countCorrect++;
+					play.player1.currentScore += 50;
+					play.player1.progress += 10;
+					play.player2.progress -= 10;
+				}else{
+					play.player2.countTotal++;
+					play.player2.countCorrect++;
+					play.player2.currentScore += 50;
+					play.player2.progress += 10;
+					play.player1.progress -= 10;
+				}
+			}else{
+				resultState.status = false;
+				if(playerClient == player1.id){
+					play.player1.countTotal++;
+					play.player1.countIncorrect++;
+					play.player1.progress -= 10;
+					play.player2.progress += 10;
+				}else{
+					play.player2.countTotal++;
+					play.player2.countIncorrect++;
+					play.player2.progress -= 10;
+					play.player1.progress += 10;
+				}
+			}
+	
+			if(play.player1.countIncorrect === 4 || play.player1.progress === 0){
+				play.player1.attrStatus = 'lost';
+				play.player2.attrStatus = 'win';
+				play.attrStatus = 'endGame';
+			}else if(play.player1.countCorrect === 6 || play.player1.progress === 100){
+				play.player1.attrStatus = 'win';
+				play.player2.attrStatus = 'lost';
+				play.attrStatus = 'endGame';
+			}else if(play.player2.countIncorrect === 4 || play.player2.progress === 0){
+				play.player2.attrStatus = 'lost';
+				play.player1.attrStatus = 'win';
+				play.attrStatus = 'endGame';
+			}else if(play.player2.countCorrect === 6 || play.player2.progress === 100){
+				play.player2.attrStatus = 'win';
+				play.player1.attrStatus = 'lost';
+				play.attrStatus = 'endGame';
+			}else if(play.next()){
+				play.playerNow = (playerServer == player1.id) ? player2 : player1;
+				resultState.playerNow = play.playerNow;
+				resultState.question = play.show();
+				resultState.level = 1;
+			}
+			resultState.subject = play.subject;
+			resultState.player1 = play.player1;
+			resultState.player2 = play.player2;
+			resultState.gameState = play.attrStatus;
+			io.to(roomId).emit('result', resultState);
+		}
+	
+	});
+	
+	socket.on('disconnect', () => {
+		console.log(`${serverSide.players[socket.id].name} > disconnected`);
+		//serverSide.players[socket.id] = undefined;
+	});
 
 });
 
