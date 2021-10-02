@@ -118,6 +118,8 @@
     }
     
 //######################### pageNewGame ##############################
+    const otherPlayer2 = document.getElementById('NameOtherPlayer2');
+    const otherPlayerId2 = document.getElementById('idOtherPlayer2');
     const MultiplayerSubject = document.getElementById('MultiplayerSubject');
     const messageBoxCreate = document.getElementById('messageBoxCreate');
     const msgTitleCreate = document.getElementById('messageTitleCreate');
@@ -133,6 +135,8 @@
         pageNewGame.style.display = "block";
         pageGame.style.display = "none";
         pageEndGame.style.display = "none";
+        otherPlayer2.innerText = otherPlayer.innerText;
+        otherPlayerId2.innerText = otherPlayerId.innerText;
     });
     socket.on('setDisableTrue', () => {
         MultiplayerSubject.disabled = false;
