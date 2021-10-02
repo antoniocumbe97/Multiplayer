@@ -21,6 +21,8 @@ let categorias = [{
         "valor":"História"
     }
 ];
+import getSubjects from '/api/subject.js';
+
 let disciplina = document.getElementById('menuSelect');
 let messageBox = document.getElementById('messageBox');
 let msgTitle = document.getElementById('messageTitle');
@@ -29,8 +31,9 @@ const message = "Selecione uma disciplina";
 document.getElementById('username').innerText = localStorage.getItem('username');
 $(function(){
     let selectDisciplinas;
+    const subjects = getSubjects();
     selectDisciplinas += `<option selected value=''>Escolher...</option>`;
-    categorias.forEach(function(disciplina){
+    subjects.forEach(function(disciplina){
         selectDisciplinas += `<option value=${disciplina.valor}>${disciplina.valor}</option>`;
     });
     $('#menuSelect').html(selectDisciplinas);
