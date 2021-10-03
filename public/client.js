@@ -113,6 +113,9 @@
         otherPlayer.innerText = data.name;
         otherPlayerId.innerText = data.id;
     });
+    socket.on('btnNewGameDisableTrue', () => {
+        btnNewGame.disabled = false;
+    });
     btnNewGame.onclick = () =>{
         socket.emit('openNewGame', {playerId: socket.id});
     }
