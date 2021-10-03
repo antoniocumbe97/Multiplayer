@@ -205,8 +205,8 @@ io.on('connection', (socket) => {
 
 			io.to(serverSide.rooms[roomId].player1.id).emit('otherPlayer', serverSide.rooms[roomId].player2);
 			io.to(serverSide.rooms[roomId].player2.id).emit('otherPlayer', serverSide.rooms[roomId].player1);
-
 			io.to(roomId).emit('joinedRoom', serverSide.rooms[roomId]);
+			io.to(serverSide.rooms[roomId].player1.id).emit('btnNewGameDisableTrue');
 			
 		}
 
