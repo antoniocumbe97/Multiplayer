@@ -192,14 +192,6 @@
             "answer":"2",
             "category":"Cultura-Geral"
         },{
-            "question":"Quais são as doenças que as bactérias causam no organismo humano.", 
-            "option1":"Cólera, dor de cabeça, vómitos e Malária", 
-            "option2":"Cólera, Vómitos, Tétano e diarreia", 
-            "option3":"Cansaço, Vómitos, Tétano e micose", 
-            "option4":"Sarampo, vómitos, diarreias e cólera", 
-            "answer":"2",
-            "category":"Cultura-Geral"
-        },{
             "question":"O sangue realiza dois trajetos circulares no nosso corpo, são eles", 
             "option1":"Circulação normal e circulação composta", 
             "option2":"A pequena circulação e a grande Circulação", 
@@ -4078,7 +4070,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"Eduardo Mondlane University is famous______its quality of educatio:", 
+            "question":"Eduardo Mondlane University is famous______its quality of education:", 
             "option1":"at", 
             "option2":"for", 
             "option3":"on", 
@@ -4265,12 +4257,12 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"have you met_____?:", 
+            "question":"Have you met_____?:", 
             "option1":"Mr.Raul wife", 
             "option2":"Mr.Raul's wife", 
             "option3":"the wife's Mr.Raul", 
             "option4":"The wife Mr.Raul", 
-            "answer":"3",
+            "answer":"2",
             "category":"Inglês",
             "level":"high",
             "reference":"exame12-2014 extra",
@@ -4639,7 +4631,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"I want some flowers for my girlfriend, she loves_____roses:", 
+            "question":"I want some flowers for my girlfriend, she loves_____roses.", 
             "option1":"intelligent", 
             "option2":"red", 
             "option3":"teenager", 
@@ -4656,7 +4648,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"My neighbour taught his chilfren_____to ask for a lifs from strangers:", 
+            "question":"My neighbour taught his children to _____ask for lifts from strangers.", 
             "option1":"always", 
             "option2":"never", 
             "option3":"often", 
@@ -4673,7 +4665,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"The illegal emigrant answered th question...:", 
+            "question":"The illegal emigrant answered the question____", 
             "option1":"cloudily", 
             "option2":"elderly", 
             "option3":"nervously", 
@@ -4690,7 +4682,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"I know your book is also red but I'm looking for...:", 
+            "question":"I know your book is also red but I'm looking for____", 
             "option1":"I", 
             "option2":"me", 
             "option3":"mine", 
@@ -4707,7 +4699,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"The candidate____-got the highst mark in 2013 exams was from my school:", 
+            "question":"The candidate____got the highest mark in 2013 exam's was from my school", 
             "option1":"what", 
             "option2":"when", 
             "option3":"which", 
@@ -4860,7 +4852,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"Mozambique bacame independent(from Portugal)_____1975:", 
+            "question":"Mozambique became independent(from Portugal)_____1975:", 
             "option1":"at", 
             "option2":"by", 
             "option3":"in", 
@@ -4877,7 +4869,7 @@
                 "cellphone":"843771976"
             }
         },{
-            "question":"We always start our lessons______7:15:", 
+            "question":"We always start our lessons______7:15.", 
             "option1":"at", 
             "option2":"by", 
             "option3":"in", 
