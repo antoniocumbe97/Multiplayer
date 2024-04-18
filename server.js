@@ -58,25 +58,24 @@ const Timer = {
 }
 
 function randomQuestions(size){
-	//const SizeQuestions = Question.all.length;
 	let num = new Array(size);
-	for(let i=0; i<size; i++){ //laço para percorrer todo o vetor
-		let randomNumber = Math.floor(Math.random()*size); //gerando número aleatório
-		let found = false; //para saber se o numero foi encontrado ou não no vetor
-		for(let count=0; count<i; count++){ //função que percorre o vetor até onde já tenha sido preenchido
-			if(num[count] == randomNumber){ //verifica se o item no vetor é igual ao gerado
-				found = true; //se é igual a variável found recebe verdadeiro
-				break; //e o laço de verificação é interrompido
-			}else{//se não é igual
-				found = false; //variável found recebe falso
+	for(let i=0; i<size; i++){
+		let randomNumber = Math.floor(Math.random()*size);
+		let found = false;
+		for(let count=0; count<i; count++){
+			if(num[count] == randomNumber){
+				found = true;
+				break;
+			}else{
+				found = false;
 			}
-		} //fim do laço que verifica a existência do numero no vetor
-		if(!found){ //se found é igual a false
-			num[i] = randomNumber; //o indice do vetor recebe o número gerado
-		}else{ //se é verdadeiro
-			i--; //o índice é decrementado para que haja um novo teste
 		}
-	} // fim do laço que percorre todo o vetor
+		if(!found){
+			num[i] = randomNumber;
+		}else{
+			i--;
+		}
+	}
 	return num;
 }
 
@@ -86,7 +85,6 @@ const serverSide = {
 }
 
 function Quiz (subject, allQuestions, sequenceQuestions, players) {
-	//Questions	
 	this.all = allQuestions,
 	this.sequence = sequenceQuestions,
 	this.current = 0,
@@ -97,7 +95,6 @@ function Quiz (subject, allQuestions, sequenceQuestions, players) {
 		id : players.player2.id,
 		name : players.player2.name
 	},
-	//player 1
 	this.player1 = {
 		id : players.player1.id,
 		name : players.player1.name,
@@ -108,7 +105,6 @@ function Quiz (subject, allQuestions, sequenceQuestions, players) {
 		currentScore : 0,
 		progress : 50
 	}
-	//player 2
 	this.player2 = {
 		id : players.player2.id,
 		name : players.player2.name,
@@ -119,7 +115,6 @@ function Quiz (subject, allQuestions, sequenceQuestions, players) {
 		currentScore : 0,
 		progress : 50
 	}
-	//Methods
 	this.next = () => {
 		if(this.current < this.all.length-1){
 			this.current++;
@@ -167,7 +162,6 @@ function getState(roomId){
 }
 
 io.on('connection', (socket) => {
-  //adicionar player conectado ao socket
   const name = `Player_${socket.id}`;
   serverSide.players[socket.id] = {name};
 
@@ -321,14 +315,12 @@ io.on('connection', (socket) => {
 	
 	socket.on('disconnect', () => {
 		console.log(`${serverSide.players[socket.id].name} > disconnected`);
-		//serverSide.players[socket.id] = undefined;
 	});
 
 });
 
 app.use(express.static('public'));
 
-/*Rotas*/
 app.get('/', (req, res) => {
   res.sendFile (__dirname + '/index.html' );
 });
