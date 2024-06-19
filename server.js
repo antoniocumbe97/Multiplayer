@@ -357,6 +357,11 @@ app.get('/home/multiplayer/room/join', (req, res) => {
   res.sendFile (__dirname + '/public' + '/views/game2.html' );
 });
 
+app.get('/webhook', (req, res) => {
+  const verifyToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTg4MjM0OTQsImV4cCI6MTc1MDM1OTQ5NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.PB_kZEDJtOt_eVb9MH_WY4-Yy5wgvc6gJb3vokcJFLs';
+  res.send(req.query['hub.challenge']).status(200).end();
+});
+
 server.listen(PORT, function(){
   console.log(`server started on port => ${PORT}`);
 });
