@@ -358,9 +358,83 @@ app.get('/home/multiplayer/room/join', (req, res) => {
 });
 
 app.get('/webhook', (req, res) => {
-  const verifyToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MTg4MjM0OTQsImV4cCI6MTc1MDM1OTQ5NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.PB_kZEDJtOt_eVb9MH_WY4-Yy5wgvc6gJb3vokcJFLs';
+  const verifyToken = 'EAAUfxIMPW68BO3unWwGumZANU0wDQgjwDcFzyko9aFkT95VTfAPLwz8P8Hcam68IdCy26rJZCS2KZCAYQZCoUqeeyjHQZCqX7DghomPHpyZCMh3xUUduwzvpYWS5GOIpDNlYLhHrddG9G9PXwhKxBKwfgZBHj9s98ZCDJepDsGZCOgspb5uTEnbG99AjyYMTCHiQeHEHIJDdt4QZAI9Je9ELUZD';
+  app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  if (mode && token) {
+    if (mode === 'subscribe' && token === verifyToken) {
+      console.log('WEBHOOK_VERIFIED');
+      res.status(200).send(challenge);
+    } else {
+      res.sendStatus(403);
+    }
+  }
+});
   res.send(req.query['hub.challenge']).status(200).end();
 });
+
+app.post('/webhook', (req, res) => {
+  const body = req.body;
+
+  if (body.object) {
+    body.entry.forEach(entry => {
+      const webhookEvent = entry.messaging[0];
+      console.log('Mensagem Recebida:', webhookEvent);
+
+      if (webhookEvent.message) {
+        handleMessage(webhookEvent.sender.id, webhookEvent.message);
+      }
+    });
+
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+function handleMessage(senderId, message) {
+  if (message.text) {
+    handleTextMessage(senderId, message.text);
+  } else if (message.attachments) {
+    handleAttachmentMessage(senderId, message.attachments);
+  }
+}
+
+function handleTextMessage(senderId, text) {
+  if (text.toLowerCase() === 'olá') {
+    sendTextMessage(senderId, 'Olá! Como posso ajudar?');
+  } else {
+    sendTextMessage(senderId, `Você disse: ${text}`);
+  }
+}
+
+function handleAttachmentMessage(senderId, attachments) {
+  sendTextMessage(senderId, 'Recebi um anexo.');
+}
+
+function sendTextMessage(recipientId, message) {
+  const payload = {
+    messaging_product: 'whatsapp',
+    to: recipientId,
+    text: { body: message },
+  };
+  const verifyToken = 'EAAUfxIMPW68BO3unWwGumZANU0wDQgjwDcFzyko9aFkT95VTfAPLwz8P8Hcam68IdCy26rJZCS2KZCAYQZCoUqeeyjHQZCqX7DghomPHpyZCMh3xUUduwzvpYWS5GOIpDNlYLhHrddG9G9PXwhKxBKwfgZBHj9s98ZCDJepDsGZCOgspb5uTEnbG99AjyYMTCHiQeHEHIJDdt4QZAI9Je9ELUZD';
+  axios.post(`https://graph.facebook.com/v20.0/373909035797664/messages`, payload, {
+    headers: {
+      Authorization: `Bearer ${verifyToken}`,
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    console.log('Mensagem enviada:', response.data);
+  })
+  .catch(error => {
+    console.error('Erro ao enviar mensagem:', error.response.data);
+  });
+}
 
 server.listen(PORT, function(){
   console.log(`server started on port => ${PORT}`);
